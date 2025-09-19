@@ -5,6 +5,7 @@ import torch
 import argparse
 from torch.nn import functional as F
 import warnings
+from io import BytesIO
 import numpy as np
 
 INTERPOLATOR_ROOT = os.path.dirname(__file__)  # INTERPOLATOR_ROOT root directory
@@ -48,24 +49,50 @@ class InterpolatorInterface:
         self.model.device()
     def generate(
         self,
-        imgs:tuple[str, str]|None = None,
-        exp:int=4,
-        ratio:float=0,
-        rthreshold:float=0.02,
-        rmaxcycles:int=8,
-        outputdir:str|None = None
+        imgs: tuple[str | np.ndarray | bytes, str | np.ndarray | bytes] | None = None,
+        exp: int = 4,
+        ratio: float = 0,
+        rthreshold: float = 0.02,
+        rmaxcycles: int = 8,
+        outputdir: str | None = None
     ) -> list[str] | list[np.ndarray]:
-        if imgs[0].endswith('.exr') and imgs[1].endswith('.exr'):
-            img0 = cv2.imread(imgs[0], cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)
-            img1 = cv2.imread(imgs[1], cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)
-            img0 = (torch.tensor(img0.transpose(2, 0, 1)).to(self.device)).unsqueeze(0)
-            img1 = (torch.tensor(img1.transpose(2, 0, 1)).to(self.device)).unsqueeze(0)
+        """
+        imgs can be:
+          - tuple of file paths: (str, str)
+          - tuple of numpy arrays: (np.ndarray, np.ndarray)
+          - tuple of raw image bytes: (bytes, bytes)
+          - or any mix (str, np.ndarray, bytes)
+        """
 
-        else:
-            img0 = cv2.imread(imgs[0], cv2.IMREAD_UNCHANGED)
-            img1 = cv2.imread(imgs[1], cv2.IMREAD_UNCHANGED)
-            img0 = (torch.tensor(img0.transpose(2, 0, 1)).to(self.device) / 255.).unsqueeze(0)
-            img1 = (torch.tensor(img1.transpose(2, 0, 1)).to(self.device) / 255.).unsqueeze(0)
+        def _load_img(img):
+            if isinstance(img, str):  # file path
+                if not os.path.isfile(img):
+                    raise FileNotFoundError(f"Image file not found: {img}")
+                if img.endswith('.exr'):
+                    p_img = cv2.imread(img, cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)
+                    p_img = (torch.tensor(p_img.transpose(2, 0, 1)).to(self.device)).unsqueeze(0)
+                    return p_img
+                else:
+                    p_img = cv2.imread(img, cv2.IMREAD_UNCHANGED)
+                    p_img = (torch.tensor(p_img.transpose(2, 0, 1)).to(self.device) / 255.).unsqueeze(0)
+                    return p_img
+            elif isinstance(img, np.ndarray): # must br in BGR format
+                p_img = (torch.tensor(img.transpose(2, 0, 1), dtype=torch.float32).to(self.device) / 255.).unsqueeze(0)
+                return p_img
+            elif isinstance(img, (bytes, bytearray, BytesIO)):  # raw image bytes
+                if isinstance(img, BytesIO):
+                    img = img.getvalue()
+                arr = np.frombuffer(img, np.uint8)
+                p_img = cv2.imdecode(arr, cv2.IMREAD_UNCHANGED)
+                if p_img is None:
+                    raise ValueError(f"Failed to decode image bytes: {img}")
+                p_img = (torch.tensor(img.transpose(2, 0, 1), dtype=torch.float32).to(self.device) / 255.).unsqueeze(0)
+                return p_img
+            else:
+                raise TypeError(f"Unsupported image type: {type(img)}")
+
+        img0 = _load_img(imgs[0])
+        img1 = _load_img(imgs[1])
 
         n, c, h, w = img0.shape
         ph = ((h - 1) // 32 + 1) * 32
