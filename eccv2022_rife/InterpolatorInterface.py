@@ -9,37 +9,52 @@ import numpy as np
 import sys
 
 INTERPOLATOR_ROOT = os.path.dirname(__file__)  # INTERPOLATOR_ROOT root directory
-__location__ = os.path.realpath(
-    os.path.join(os.getcwd(), os.path.dirname(__file__)))
-if str(INTERPOLATOR_ROOT) not in sys.path:
-    sys.path.append(str(INTERPOLATOR_ROOT))  # add INTERPOLATOR_ROOT to PATH
 
 
 class InterpolatorInterface:
-    def __init__(self, model_pth=os.path.join(INTERPOLATOR_ROOT, "train_log") ): # os.path.join(INTERPOLATOR_ROOT, "RIFEv4.22", "train_log")):
+    def __init__(self, model_ver = 2, model_pth=os.path.join(INTERPOLATOR_ROOT, "train_log") ): # os.path.join(INTERPOLATOR_ROOT, "RIFEv4.22", "train_log")):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         torch.set_grad_enabled(False)
         if torch.cuda.is_available():
             torch.backends.cudnn.enabled = True
             torch.backends.cudnn.benchmark = True
-        
+        print("model_ver:",model_ver)
         try:
             try:
-                try:
+                if model_ver == 3:
                     from eccv2022_rife.train_log.RIFE_HDv3 import Model
                     self.model = Model()
                     self.model.load_model(model_pth, -1)
                     print("Loaded v3.x HD model.")
-                except:
+                elif model_ver == 2:
                     from eccv2022_rife.model.oldmodel.RIFE_HDv2 import Model
                     self.model = Model()
                     self.model.load_model(model_pth, -1)
                     print("Loaded v2.x HD model.")
+                elif model_ver == 1:
+                    from eccv2022_rife.model.oldmodel.RIFE_HD import Model
+                    self.model = Model()
+                    self.model.load_model(model_pth, -1)
+                    print("Loaded v1.x HD model")
+                else:
+                    raise Exception("Invalid model version")
             except:
-                from eccv2022_rife.model.oldmodel.RIFE_HD import Model
-                self.model = Model()
-                self.model.load_model(model_pth, -1)
-                print("Loaded v1.x HD model")
+                try:
+                    try:
+                        from eccv2022_rife.train_log.RIFE_HDv3 import Model
+                        self.model = Model()
+                        self.model.load_model(model_pth, -1)
+                        print("Loaded v3.x HD model.")
+                    except:
+                        from eccv2022_rife.model.oldmodel.RIFE_HDv2 import Model
+                        self.model = Model()
+                        self.model.load_model(model_pth, -1)
+                        print("Loaded v2.x HD model.")
+                except:
+                    from eccv2022_rife.model.oldmodel.RIFE_HD import Model
+                    self.model = Model()
+                    self.model.load_model(model_pth, -1)
+                    print("Loaded v1.x HD model")
         except:
             from eccv2022_rife.model.RIFE import Model
             self.model = Model()

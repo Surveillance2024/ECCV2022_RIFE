@@ -2,5 +2,5 @@
 name = "my-other-project"
 version = "0.1.0"
 dependencies = [
-    "eccv2022-rife @ git+https://github.com/your-username/your-repo.git",
+    "eccv2022-rife @ file:///Users/daniel/Desktop/Lessons/lyn_lab/ECCV2022_RIFE",
 ]

@@ -9,7 +9,7 @@ import random
 import argparse
 
 from .model.RIFE import Model
-from dataset import *
+from .dataset import *
 from torch.utils.data import DataLoader, Dataset
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data.distributed import DistributedSampler
