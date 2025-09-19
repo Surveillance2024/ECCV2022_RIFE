@@ -28,7 +28,7 @@ wheels = [
 [[package]]
 name = "eccv2022-rife"
 version = "0.1.0"
-source = { directory = "../" }
+source = { git = "https://github.com/Surveillance2024/ECCV2022_RIFE.git?rev=main#cb547fdadff6c9f39b37263370ae41caf4730c97" }
 dependencies = [
     { name = "moviepy" },
     { name = "numpy" },
@@ -37,17 +37,6 @@ dependencies = [
     { name = "torch" },
     { name = "torchvision" },
     { name = "tqdm" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "moviepy", specifier = ">=1.0.3" },
-    { name = "numpy", specifier = ">=1.16" },
-    { name = "opencv-python", specifier = ">=4.1.2" },
-    { name = "sk-video", specifier = ">=1.1.10" },
-    { name = "torch", specifier = ">=1.6.0" },
-    { name = "torchvision", specifier = ">=0.7.0" },
-    { name = "tqdm", specifier = ">=4.35.0" },
 ]
 
 [[package]]
@@ -171,7 +160,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "eccv2022-rife", directory = "../" }]
+requires-dist = [{ name = "eccv2022-rife", git = "https://github.com/Surveillance2024/ECCV2022_RIFE.git?rev=main" }]
 
 [[package]]
 name = "networkx"

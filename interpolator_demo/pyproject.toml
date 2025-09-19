@@ -1,6 +1,6 @@
 [project]
-name = "my-other-project"
+name = "interpolator_demo"
 version = "0.1.0"
 dependencies = [
-    "eccv2022-rife @ file:///Users/daniel/Desktop/Lessons/lyn_lab/ECCV2022_RIFE",
+    "eccv2022-rife @ git+https://github.com/Surveillance2024/ECCV2022_RIFE.git@main",
 ]
