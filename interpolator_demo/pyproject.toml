@@ -1,0 +1,6 @@
+[project]
+name = "my-other-project"
+version = "0.1.0"
+dependencies = [
+    "eccv2022-rife @ git+https://github.com/your-username/your-repo.git",
+]

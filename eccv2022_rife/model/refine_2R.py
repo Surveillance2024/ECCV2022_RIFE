@@ -3,7 +3,7 @@ import torch.nn as nn
 import numpy as np
 import torch.optim as optim
 import itertools
-from model.warplayer import warp
+from .warplayer import warp
 from torch.nn.parallel import DistributedDataParallel as DDP
 import torch.nn.functional as F
 

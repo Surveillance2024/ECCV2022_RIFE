@@ -1,5 +1,4 @@
 import os
-import sys
 import cv2
 import torch
 import argparse
@@ -7,12 +6,14 @@ from torch.nn import functional as F
 import warnings
 from io import BytesIO
 import numpy as np
+import sys
 
 INTERPOLATOR_ROOT = os.path.dirname(__file__)  # INTERPOLATOR_ROOT root directory
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 if str(INTERPOLATOR_ROOT) not in sys.path:
     sys.path.append(str(INTERPOLATOR_ROOT))  # add INTERPOLATOR_ROOT to PATH
+
 
 class InterpolatorInterface:
     def __init__(self, model_pth=os.path.join(INTERPOLATOR_ROOT, "train_log") ): # os.path.join(INTERPOLATOR_ROOT, "RIFEv4.22", "train_log")):
@@ -25,22 +26,22 @@ class InterpolatorInterface:
         try:
             try:
                 try:
-                    from model.RIFE_HDv2 import Model
-                    self.model = Model()
-                    self.model.load_model(model_pth, -1)
-                    print("Loaded v2.x HD model.")
-                except:
-                    from train_log.RIFE_HDv3 import Model
+                    from eccv2022_rife.train_log.RIFE_HDv3 import Model
                     self.model = Model()
                     self.model.load_model(model_pth, -1)
                     print("Loaded v3.x HD model.")
+                except:
+                    from eccv2022_rife.model.oldmodel.RIFE_HDv2 import Model
+                    self.model = Model()
+                    self.model.load_model(model_pth, -1)
+                    print("Loaded v2.x HD model.")
             except:
-                from model.RIFE_HD import Model
+                from eccv2022_rife.model.oldmodel.RIFE_HD import Model
                 self.model = Model()
                 self.model.load_model(model_pth, -1)
                 print("Loaded v1.x HD model")
         except:
-            from model.RIFE import Model
+            from eccv2022_rife.model.RIFE import Model
             self.model = Model()
             self.model.load_model(model_pth, -1)
             print("Loaded ArXiv-RIFE model")
