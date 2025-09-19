@@ -1,4 +1,4 @@
-from InterpolatorInterface import InterpolatorInterface
+from eccv2022_rife.InterpolatorInterface import InterpolatorInterface
 interpolator = InterpolatorInterface()
 result = interpolator.generate(
     imgs=('img0.png', 'img1.png'),

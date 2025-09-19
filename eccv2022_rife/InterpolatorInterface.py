@@ -18,7 +18,7 @@ class InterpolatorInterface:
         if torch.cuda.is_available():
             torch.backends.cudnn.enabled = True
             torch.backends.cudnn.benchmark = True
-        print("model_ver:",model_ver)
+
         try:
             try:
                 if model_ver == 3:
