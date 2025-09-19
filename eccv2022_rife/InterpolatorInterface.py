@@ -173,20 +173,12 @@ class InterpolatorInterface:
             output_list = []
 
             for i in range(len(img_list)):
-                if imgs[0].endswith('.exr') and imgs[1].endswith('.exr'):
-                    new_img_pth = os.path.join(outputdir, 'img{}.exr'.format(next_index+i))
-                    cv2.imwrite(new_img_pth, (img_list[i][0]).cpu().numpy().transpose(1, 2, 0)[:h, :w], [cv2.IMWRITE_EXR_TYPE, cv2.IMWRITE_EXR_TYPE_HALF])
-                    output_list.append(new_img_pth)
-                else:
-                    new_img_pth = os.path.join(outputdir, 'img{}.png'.format(next_index+i))
-                    cv2.imwrite(new_img_pth, (img_list[i][0] * 255).byte().cpu().numpy().transpose(1, 2, 0)[:h, :w])
-                    output_list.append(new_img_pth)
+                new_img_pth = os.path.join(outputdir, 'img{}.png'.format(next_index+i))
+                cv2.imwrite(new_img_pth, (img_list[i][0] * 255).byte().cpu().numpy().transpose(1, 2, 0)[:h, :w])
+                output_list.append(new_img_pth)
             return output_list
         else:
             return_list = []
             for i in range(len(img_list)):
-                if imgs[0].endswith('.exr') and imgs[1].endswith('.exr'):
-                    return_list.append((img_list[i][0]).cpu().numpy().transpose(1, 2, 0)[:h, :w])
-                else:
-                    return_list.append((img_list[i][0] * 255).byte().cpu().numpy().transpose(1, 2, 0)[:h, :w])
+                return_list.append((img_list[i][0] * 255).byte().cpu().numpy().transpose(1, 2, 0)[:h, :w])
             return return_list
