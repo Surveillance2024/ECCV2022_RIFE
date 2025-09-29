@@ -102,7 +102,7 @@ class InterpolatorInterface:
                 p_img = cv2.imdecode(arr, cv2.IMREAD_UNCHANGED)
                 if p_img is None:
                     raise ValueError(f"Failed to decode image bytes: {img}")
-                p_img = (torch.tensor(img.transpose(2, 0, 1), dtype=torch.float32).to(self.device) / 255.).unsqueeze(0)
+                p_img = (torch.tensor(p_img.transpose(2, 0, 1), dtype=torch.float32).to(self.device) / 255.).unsqueeze(0)
                 return p_img
             else:
                 raise TypeError(f"Unsupported image type: {type(img)}")
